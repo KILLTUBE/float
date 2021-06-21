@@ -1,6 +1,8 @@
 // Quick one liners
 // tabulate([...Array(30)].map((x, i)=>{return [i, i%10]}), {id:'mantissacalculator', header: ['i', 'i%10']})
 
+// float_to_uint(-248.75)
+// 3279470592
 function float_to_uint(float) {
   var ab = new ArrayBuffer(4);
   var f = new Float32Array(ab);
@@ -9,6 +11,8 @@ function float_to_uint(float) {
   return u[0];
 }
 
+// uint_to_float(3279470592)
+// -248.75
 function uint_to_float(uint) {
   var ab = new ArrayBuffer(4);
   var f = new Float32Array(ab);
@@ -17,18 +21,13 @@ function uint_to_float(uint) {
   return f[0];
 }
 
-// float_to_uint(-248.75)
-// 3279470592
-// uint_to_float(3279470592)
-// -248.75
-
-last = 0;
-curr = 0;
-
 // Make some numbers to work with
 numbers = [];
 for (var i=-3; i<3; i+=0.1) {
   numbers.push(i);
+}
+for (var i=-3; i<3; i+=0.1) {
+  numbers.push(100 + i);
 }
 numbers.push(-248.75);
 numbers.push(Math.PI);
@@ -59,52 +58,18 @@ class Float {
   }
 }
 
-// @example tabulate([[1,2,3],[4,5,6]]);
-function tabulate(arr, options) {
-  var table = document.createElement('table');
-  var parent = undefined;
-  if (options && options.id) {
-    parent = document.getElementById(options.id);
-    if (!parent) {
-      console.error(`tabulate> id ${options.id} does not exist in dom`);
-      return;
-    }
-    parent.innerHTML = ''; // delete old content
-  }
-  if (!parent) {
-    parent = document.body;
-  }
-  parent.appendChild(table);
-  arr.forEach((row, i) => {
-    // add headers <th> every 10 rows
-    if (options && options.header && i % 10 == 0) {
-      var trHead = document.createElement('tr');
-      table.append(trHead);
-      options.header.forEach(col => {
-        var th = document.createElement('th');
-        th.innerText = col;
-        trHead.append(th);
-      });
-    }
-    // actual data
-    var tr = document.createElement('tr');
-    table.append(tr);
-    row.forEach((col, j) => {
-      var td = document.createElement('td');
-      td.innerText = col;
-      tr.append(td);
-    });
-  });
-  return table;
-}
-
 var input;
 var output;
 var mantissaCalculator;
+var last = 0;
+var curr = 0;
 
 function main() {
   mantissaCalculator = new MantissaCalculator;
   
+  var div = document.createElement('div');
+  div.id = 'numbers';
+  document.body.append(div);
   var data = [];
   for (var number of numbers) {
     float = new Float(number);
@@ -117,6 +82,5 @@ function main() {
     header: ['number', 'last', 'curr', 'last - curr', 'float']
   });
 }
-
 
 window.onload = main;
