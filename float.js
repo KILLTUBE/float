@@ -1,3 +1,6 @@
+// Quick one liners
+// tabulate([...Array(30)].map((x, i)=>{return [i, i%10]}), {id:'mantissacalculator', header: ['i', 'i%10']})
+
 function float_to_uint(float) {
   var ab = new ArrayBuffer(4);
   var f = new Float32Array(ab);
@@ -53,13 +56,36 @@ class Float {
 }
 
 // @example tabulate([[1,2,3],[4,5,6]]);
-function tabulate(arr) {
+function tabulate(arr, options) {
   var table = document.createElement('table');
-  document.body.appendChild(table);
-  arr.forEach(row => {
+  var parent = undefined;
+  if (options && options.id) {
+    parent = document.getElementById(options.id);
+    if (!parent) {
+      console.error(`tabulate> id ${options.id} does not exist in dom`);
+      return;
+    }
+    parent.innerHTML = ''; // delete old content
+  }
+  if (!parent) {
+    parent = document.body;
+  }
+  parent.appendChild(table);
+  arr.forEach((row, i) => {
+    // add headers <th> every 10 rows
+    if (options && options.header && i % 10 == 0) {
+      var trHead = document.createElement('tr');
+      table.append(trHead);
+      options.header.forEach(col => {
+        var th = document.createElement('th');
+        th.innerText = col;
+        trHead.append(th);
+      });
+    }
+    // actual data
     var tr = document.createElement('tr');
     table.append(tr);
-    row.forEach(col => {
+    row.forEach((col, j) => {
       var td = document.createElement('td');
       td.innerText = col;
       tr.append(td);
@@ -68,20 +94,47 @@ function tabulate(arr) {
   return table;
 }
 
+var input;
+var output;
+
 function main() {
+  description = document.createElement('h2');
+  description.innerText = 'Mantissa Calculator';
+  input = document.createElement('input');
+  output = document.createElement('textarea');
+  document.body.append(description, input, output);
+  input.oninput = function(e) {
+    out = '';
+    sum = 0;
+    data = [];
+    data.push();
+    input.value.split("").forEach((bit, pos)=>{
+      add = 0;
+      if (bit == '1') {
+        bitvalue = 1 << (pos+1);
+        add = 1 / bitvalue;
+        sum += add;
+      }
+      data.push([bit, pos, bitvalue, add, sum]);
+    });
+    tabulate(data, {
+      id: 'mantissacalculator',
+      arrive: '<h2>Mantissa Calculator</h2>',
+      finalize: `<b><center>Final value: ${sum}</center></b>`,
+      header: ['bit', 'pos', 'bitvalue', 'add', 'sum']
+    });
+  };
   var data = [];
-  data.push(['number', 'last', 'curr', 'last - curr', 'float']);
   for (var number of numbers) {
     float = new Float(number);
     curr = float.uint;
     data.push([number, last, curr, last - curr, float]);
     last = curr;
   }
-  
-  
-  
-  
-  tabulate(data);
+  tabulate(data, {
+    id: 'numbers',
+    header: ['number', 'last', 'curr', 'last - curr', 'float']
+  });
 }
 
 
