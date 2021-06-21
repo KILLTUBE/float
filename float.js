@@ -1,8 +1,8 @@
 // Quick one liners
 // tabulate([...Array(30)].map((x, i)=>{return [i, i%10]}), {id:'mantissacalculator', header: ['i', 'i%10']})
 
-// float_to_uint(-248.75)
-// 3279470592
+// @example
+// float_to_uint(-248.75) == 3279470592
 function float_to_uint(float) {
   var ab = new ArrayBuffer(4);
   var f = new Float32Array(ab);
@@ -11,14 +11,19 @@ function float_to_uint(float) {
   return u[0];
 }
 
-// uint_to_float(3279470592)
-// -248.75
+// @example
+// uint_to_float(3279470592) == -248.75
 function uint_to_float(uint) {
   var ab = new ArrayBuffer(4);
   var f = new Float32Array(ab);
   var u = new Uint32Array(ab);
   u[0] = uint;
   return f[0];
+}
+
+// @example reverse('Hello') == 'olleH'
+function reverse(str) {
+  return str.split('').reverse().join('');
 }
 
 // Make some numbers to work with
@@ -35,6 +40,7 @@ numbers.push(Math.E);
 numbers.push(NaN);
 numbers.push(Infinity);
 numbers.push(-Infinity);
+numbers.push(0.00390625);
 
 class Float {
   constructor(num) {
@@ -58,19 +64,20 @@ class Float {
   }
 }
 
-var input;
-var output;
 var mantissaCalculator;
-var last = 0;
-var curr = 0;
+var stacker;
 
 function main() {
   mantissaCalculator = new MantissaCalculator;
   
+  stacker = new Stacker;
+
   var div = document.createElement('div');
   div.id = 'numbers';
   document.body.append(div);
   var data = [];
+  var last = 0;
+  var curr = 0;
   for (var number of numbers) {
     float = new Float(number);
     curr = float.uint;

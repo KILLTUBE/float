@@ -1,5 +1,5 @@
 // @example tabulate([[1,2,3],[4,5,6]]);
-function tabulate(arr, options) {
+function tabulate(data, options) {
   var table = document.createElement('table');
   var parent = undefined;
   if (options && options.id) {
@@ -14,7 +14,8 @@ function tabulate(arr, options) {
     parent = document.body;
   }
   parent.appendChild(table);
-  arr.forEach((row, i) => {
+  const maxCols = Math.max(...data.map(row => row ? row.length : 0));
+  data.forEach((row, i) => {
     // add headers <th> every 10 rows
     if (options && options.header && i % 10 == 0) {
       var trHead = document.createElement('tr');
@@ -34,5 +35,13 @@ function tabulate(arr, options) {
       tr.append(td);
     });
   });
+  if (options && options.finalize) {
+    var tr = document.createElement('tr');
+    table.append(tr);
+    var td = document.createElement('td');
+    td.colSpan = maxCols;
+    td.innerHTML = options.finalize;
+    tr.append(td);
+  }
   return table;
 }
