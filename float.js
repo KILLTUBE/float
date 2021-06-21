@@ -31,7 +31,11 @@ for (var i=-3; i<3; i+=0.1) {
   numbers.push(i);
 }
 numbers.push(-248.75);
-numbers.push(Math.Pi);
+numbers.push(Math.PI);
+numbers.push(Math.E);
+numbers.push(NaN);
+numbers.push(Infinity);
+numbers.push(-Infinity);
 
 class Float {
   constructor(num) {
@@ -96,34 +100,11 @@ function tabulate(arr, options) {
 
 var input;
 var output;
+var mantissaCalculator;
 
 function main() {
-  description = document.createElement('h2');
-  description.innerText = 'Mantissa Calculator';
-  input = document.createElement('input');
-  output = document.createElement('textarea');
-  document.body.append(description, input, output);
-  input.oninput = function(e) {
-    out = '';
-    sum = 0;
-    data = [];
-    data.push();
-    input.value.split("").forEach((bit, pos)=>{
-      add = 0;
-      if (bit == '1') {
-        bitvalue = 1 << (pos+1);
-        add = 1 / bitvalue;
-        sum += add;
-      }
-      data.push([bit, pos, bitvalue, add, sum]);
-    });
-    tabulate(data, {
-      id: 'mantissacalculator',
-      arrive: '<h2>Mantissa Calculator</h2>',
-      finalize: `<b><center>Final value: ${sum}</center></b>`,
-      header: ['bit', 'pos', 'bitvalue', 'add', 'sum']
-    });
-  };
+  mantissaCalculator = new MantissaCalculator;
+  
   var data = [];
   for (var number of numbers) {
     float = new Float(number);
