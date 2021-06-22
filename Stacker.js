@@ -18,6 +18,25 @@ function not(a) {
   return ~a;
 }
 
+function unsignedRightShift(a, b) {
+  return a >>> b;
+}
+
+// TODO:
+// remainder %
+// exponentiation **
+// logical not !
+// bitwise left/right << >>
+// bitwise and/or/xor & | ^
+
+// todo bits(0.1) is wrong
+function bits(x) {
+  x = x.toString(2);
+  x = x.padStart(32, '0');
+  x = '0b' + x;
+  return x;
+}
+
 class Stacker {
   ops = [];
   constructor() {
@@ -25,100 +44,38 @@ class Stacker {
     this.input = document.createElement('input');
     this.input.value = '100';
     this.table = document.createElement('table');
-    // +
-    this.buttonAdd = document.createElement('button');
-    this.buttonAdd.innerText = '+';
-    this.buttonAdd.onclick = function(e) {
-      var opInput = this.newInput();
-      opInput.inputRight.value = '0';
-      opInput.tdMiddle.innerText = '+';
-      if (this.ops.length == 0)
-        opInput.inputLeft.value = this.input.value;
-      else {
-        opInput.inputLeft.value = this.ops[this.ops.length - 1].opInput.inputResult.value;
-      }
-      this.ops.push({
-        func: add,
-        opInput
-      });
-      this.update();
-    }.bind(this);
-    // -
-    this.buttonSub = document.createElement('button');
-    this.buttonSub.innerText = '-';
-    this.buttonSub.onclick = function(e) {
-      var opInput = this.newInput();
-      opInput.inputRight.value = '0';
-      opInput.tdMiddle.innerText = '-';
-      this.ops.push({
-        func: sub,
-        opInput
-      });
-      this.update();
-    }.bind(this);
-    // *
-    this.buttonMul = document.createElement('button');
-    this.buttonMul.innerText = '*';
-    this.buttonMul.onclick = function(e) {
-      var opInput = this.newInput();
-      opInput.inputRight.value = '1';
-      opInput.tdMiddle.innerText = '*';
-      this.ops.push({
-        func: mul,
-        opInput
-      });
-      this.update();
-    }.bind(this);
-    // /
-    this.buttonDiv = document.createElement('button');
-    this.buttonDiv.innerText = '/';
-    this.buttonDiv.onclick = function(e) {
-      var opInput = this.newInput();
-      opInput.inputRight.value = '1';
-      opInput.tdMiddle.innerText = '/';
-      this.ops.push({
-        func: div,
-        opInput
-      });
-      this.update();
-    }.bind(this);
-    // ~
-    this.buttonNot = document.createElement('button');
-    this.buttonNot.innerText = '~';
-    this.buttonNot.onclick = function(e) {
-      var opInput = this.newInput();
-      opInput.tdMiddle.innerText = '~';
-      this.ops.push({
-        func: not,
-        opInput
-      });
-      this.update();
-    }.bind(this);
-
-    this.buttonSin = this.addFunc(Math.sin);
-    this.buttonCos = this.addFunc(Math.cos);
-    this.buttonAbs = this.addFunc(Math.abs);
-
     document.body.append(
       this.div,
       this.input,
-      this.table,
-      this.buttonAdd,
-      this.buttonSub,
-      this.buttonMul,
-      this.buttonDiv,
-      this.buttonNot,
+      this.table
     );
-
+    this.buttonAdd                = this.addFunc(add               , '+'   , 0   );
+    this.buttonSub                = this.addFunc(sub               , '-'   , 0   );
+    this.buttonMul                = this.addFunc(mul               , '*'   , 1   );
+    this.buttonDiv                = this.addFunc(div               , '/'   , 1   );
+    this.buttonNot                = this.addFunc(not               , '~'   , null);
+    this.buttonSin                = this.addFunc(Math.sin          , 'sin' , null);
+    this.buttonCos                = this.addFunc(Math.cos          , 'cos' , null);
+    this.buttonAbs                = this.addFunc(Math.abs          , 'abs' , null);
+    this.buttonUnsignedRightShift = this.addFunc(unsignedRightShift, '>>>' , 0   );
+    this.buttonUnsignedRightShift = this.addFunc(bits              , 'bits', 0   );
   }
 
-  addFunc(func) {
+  addFunc(func, name, identityValue) {
     var button;
     button = document.createElement('button');
-    button.innerText = func.name;
+    button.innerText = name;
     button.onclick = function(e) {
       var opInput = this.newInput();
-      opInput.tdMiddle.innerText = func.name;
+      opInput.tdMiddle.innerText = name;
+      if (this.ops.length == 0) {
+        opInput.inputLeft.value = this.input.value;
+      } else {
+        opInput.inputLeft.value = this.ops[this.ops.length - 1].opInput.inputResult.value;
+      }
+      if (identityValue != null) {
+        opInput.inputRight.value = identityValue;
+      }
       this.ops.push({
         func,
         opInput
